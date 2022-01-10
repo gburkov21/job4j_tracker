@@ -21,7 +21,7 @@ public class PointTest {
         double expected = 4.0;
         Point a = new Point(2, 2);
         Point b = new Point(2, 6);
-        double rsl = a.distance(b);
+        double rsl = a.distance3d(b);
         Assert.assertEquals(rsl, expected, 0.01);
     }
 }
