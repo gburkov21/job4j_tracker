@@ -44,6 +44,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return MessageFormat.format("Item'{'id={0}, name=''{1}'', created={2}'}'", id, name, created.format(FORMATTER));
+        return MessageFormat.format("Item'{'id={0}, name={1}, created={2}'}'", id, name, created.format(FORMATTER));
     }
 }
