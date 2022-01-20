@@ -9,9 +9,7 @@ public class BankService {
     private final Map<User, List<Account>> users = new HashMap<>();
 
     public void addUser(User user) {
-        if (!users.containsKey(user)) {
-            users.put(user, new ArrayList<>());
-        }
+        users.putIfAbsent(user, new ArrayList<>());
     }
 
     public void addAccount(String passport, Account account) {
@@ -20,7 +18,6 @@ public class BankService {
             List<Account> accounts = users.get(user);
             if (!accounts.contains(account)) {
                 accounts.add(account);
-                users.put(user, accounts);
             }
         }
 
