@@ -10,7 +10,7 @@ public class StringCompare implements Comparator<String> {
         int length = Math.min(firstArray.length, secondArray.length);
         for (int i = 0; i < length; i++) {
             if (firstArray[i] != secondArray[i]) {
-                return Integer.compare(firstArray[i], secondArray[i]);
+                return Character.compare(firstArray[i], secondArray[i]);
             }
         }
         return Integer.compare(o1.length(), o2.length());
