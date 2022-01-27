@@ -12,6 +12,10 @@ public class Profiles {
 
     public static List<Address> collectSortWithoutDuplicate(List<Profile> profiles) {
         Comparator<Address> cityComparator = (firstAddress, secondAddress) -> firstAddress.getCity().compareTo(secondAddress.getCity());
-        return profiles.stream().map(profile -> profile.getAddress()).sorted(cityComparator).distinct().toList();
+        return profiles.stream()
+                .map(profile -> profile.getAddress())
+                .sorted(cityComparator)
+                .distinct()
+                .toList();
     }
 }
