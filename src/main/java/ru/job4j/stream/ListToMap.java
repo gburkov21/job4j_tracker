@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 public class ListToMap {
     public static Map<String, Student> convert(List<Student> list) {
         Map<String, Student> resultMap = list.stream()
-                .distinct()
                 .collect(Collectors.toMap(
                         key -> key.getSurname(),
                         value -> value,
