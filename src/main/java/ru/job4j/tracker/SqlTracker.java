@@ -25,6 +25,10 @@ public class SqlTracker implements Store, AutoCloseable {
         }
     }
 
+    public void setCn(Connection cn) {
+        this.cn = cn;
+    }
+
     @Override
     public void close() throws Exception {
         if (cn != null) {
