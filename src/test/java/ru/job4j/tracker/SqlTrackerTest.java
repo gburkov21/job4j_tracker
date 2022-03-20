@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class SqlTrackerTest {
 
@@ -74,9 +75,9 @@ public class SqlTrackerTest {
         Item item = tracker.add(new Item("item"));
         Item secondItem = tracker.add(new Item("superItem"));
         assertThat(tracker.findAll(), is(List.of(item, secondItem)));
-        assertThat(tracker.delete(item.getId()), is(true));
+        assertTrue(tracker.delete(item.getId()));
         assertThat(tracker.findAll(), is(List.of(secondItem)));
-        assertThat(tracker.delete(secondItem.getId()), is(true));
+        assertTrue(tracker.delete(secondItem.getId()));
         assertThat(tracker.findAll(), is(empty()));
     }
 
@@ -99,9 +100,10 @@ public class SqlTrackerTest {
         SqlTracker tracker = new SqlTracker();
         tracker.setCn(connection);
         Item item = tracker.add(new Item("item"));
-        Item secondItem = tracker.add(new Item("secondItem"));
-        assertThat(tracker.findByName(item.getName()).get(0).getName(), is("item"));
-        assertThat(tracker.findByName(secondItem.getName()).get(0).getName(), is("secondItem"));
+        Item secondItem = tracker.add(new Item("item"));
+        Item thirdItem = tracker.add(new Item("new"));
+        assertThat(tracker.findByName("item"), is(List.of(item, secondItem)));
+        assertThat(tracker.findByName("new"), is(List.of(thirdItem)));
     }
 
 }
