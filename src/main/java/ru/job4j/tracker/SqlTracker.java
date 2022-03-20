@@ -38,7 +38,8 @@ public class SqlTracker implements Store, AutoCloseable {
 
     @Override
     public Item add(Item item) {
-        try (PreparedStatement ps = cn.prepareStatement("insert into items (name, created) values (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = cn.prepareStatement("insert into items (name, created) values (?, ?)",
+                Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, item.getName());
             ps.setTimestamp(2, Timestamp.valueOf(item.getCreated()));
             ps.execute();
@@ -107,10 +108,7 @@ public class SqlTracker implements Store, AutoCloseable {
             statement.setString(1, key);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    items.add(new Item(
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getTimestamp("created").toLocalDateTime())
+                    items.add(loadItem(resultSet)
                     );
                 }
             }
@@ -120,16 +118,21 @@ public class SqlTracker implements Store, AutoCloseable {
         return items;
     }
 
+    private Item loadItem(ResultSet resultSet) throws SQLException {
+        return new Item(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getTimestamp("created").toLocalDateTime());
+    }
+
     @Override
     public Item findById(int id) {
-        Item item = new Item();
+        Item item = null;
         try (PreparedStatement statement = cn.prepareStatement("select * from items where id = ?")) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    item.setId(id);
-                    item.setName(resultSet.getString("name"));
-                    item.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
+                if (resultSet.next()) {
+                    item = loadItem(resultSet);
                 }
             }
         } catch (Exception e) {
