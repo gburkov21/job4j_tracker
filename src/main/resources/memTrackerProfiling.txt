@@ -1,0 +1,58 @@
+1) Запустил программу с параметрами heap: -Xmx20m -Xms20m
+
+2) Запустил jps для определения id:
+C:\projects\job4j_tracker> jps
+12880 Jps
+3888
+7764 MemTracker
+5980
+
+3) Запустил jmap -histo 7764 чтобы увидеть, как создаются 100_000 объектов при вызове метода "addItems"
+PS C:\projects\job4j_tracker> jmap -histo 7764
+ num     #instances         #bytes  class name (module)
+-------------------------------------------------------
+   1:        105912        3702816  [B (java.base@17.0.1)
+   2:        105036        2520864  java.lang.String (java.base@17.0.1)
+   3:        101586        2438064  java.time.LocalDateTime (java.base@17.0.1)
+   4:        101524        2436576  java.time.LocalDate (java.base@17.0.1)
+   5:        101459        2435016  java.time.LocalTime (java.base@17.0.1)
+   6:        100000        2400000  ru.job4j.tracker.Item
+
+3.1) jmap при удалении 100_000 элементов:
+ num     #instances         #bytes  class name (module)
+-------------------------------------------------------
+   1:        105912        3702816  [B (java.base@17.0.1)
+   2:        105036        2520864  java.lang.String (java.base@17.0.1)
+   3:        101570        2437680  java.time.LocalDateTime (java.base@17.0.1)
+   4:        101508        2436192  java.time.LocalDate (java.base@17.0.1)
+   5:        101443        2434632  java.time.LocalTime (java.base@17.0.1)
+   6:        100000        2400000  ru.job4j.tracker.Item
+
+
+4) Запустил jstat -gc 7764 1s 1
+Чтобы получить сводную информацию о состоянии памяти программы при создании 100_000 объектов:
+
+PS C:\projects\job4j_tracker> jstat -gc 7764 1s 1
+    S0C         S1C         S0U         S1U          EC           EU           OC           OU          MC         MU       CCSC      CCSU     YGC     YGCT     FGC    FGCT     CGC    CGCT       GCT
+        0,0      1024,0         0,0       798,5       2048,0          0,0      17408,0      17329,5      704,0      518,3     128,0      47,0     20     0,047     0     0,000    14     0,003     0,050
+
+4.1) jstat при удалении 100_000 элементов:
+PS C:\projects\job4j_tracker> jstat -gc 5200 1s 1
+    S0C         S1C         S0U         S1U          EC           EU           OC           OU          MC         MU       CCSC      CCSU     YGC     YGCT     FGC    FGCT     CGC    CGCT       GCT
+        0,0      1024,0         0,0       902,5       2048,0          0,0      17408,0      17205,0      768,0      620,7     128,0      49,0     18     0,060     0     0,000     4     0,002     0,062
+
+5) Результат работы утилиты jconsole при вставке 100_000 элементов:
+MAX CPU Usage = 7.5%
+Clases Loaded = 2 270, Unloaded = 551, Total = 2 831;
+Heap Memory Used = 19.6 Mb, Commited = 21.0 Mb, MAX = 21.0 Mb.
+Theads Live = 13, Peak = 17, Total = 17;
+
+Результат работы утилиты jconsole при удалении 100_000 элементов:
+MAX CPU Usage = 4.0%
+Clases Loaded = 2 270, Unloaded = 104, Total = 2 374;
+Heap Memory Used = 18.7 Mb, Commited = 21.0 Mb, MAX = 21.0 Mb.
+Theads Live = 13, Peak = 16, Total = 16;
+
+Иногда при удалении возникало outOfMemoryError
+Выводы:
+Больше всего ресурсов потребляется при вставке элементов

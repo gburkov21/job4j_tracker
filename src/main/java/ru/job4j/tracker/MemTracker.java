@@ -1,5 +1,6 @@
 package ru.job4j.tracker;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,5 +63,23 @@ public class MemTracker implements Store {
             }
         }
         return rsl;
+    }
+
+    public static void addItems(MemTracker tracker) {
+        for (int i = 0; i < 100_000; i++) {
+            tracker.add(new Item(i, "Item #" + i, LocalDateTime.now()));
+        }
+    }
+
+    public static void deleteItems(MemTracker tracker) {
+        for (int i = 0; i < 100_000; i++) {
+            tracker.delete(i);
+        }
+    }
+
+    public static void main(String[] args) {
+        MemTracker tracker = new MemTracker();
+        addItems(tracker);
+        deleteItems(tracker);
     }
 }
